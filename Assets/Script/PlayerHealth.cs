@@ -1,22 +1,15 @@
 using UnityEngine;
 using System.Collections;
-
 public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth = 100;
     public int currentHealth;
-
     public float invincibilityTimeAfterHit = 3f;
     public float invincibilityFlashDelay = 0.2f;
     public bool isInvincible = false;
-
     public SpriteRenderer graphics;
     public HealthBar healthBar;
-
-    public AudioClip hitSound;
-
     public static PlayerHealth instance;
-
     private void Awake()
     {
         if (instance != null)
@@ -24,16 +17,13 @@ public class PlayerHealth : MonoBehaviour
             Debug.LogWarning("Il y a plus d'une instance de PlayerHealth dans la scène");
             return;
         }
-
         instance = this;
     }
-
     void Start()
     {
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
     }
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.H))
@@ -41,10 +31,9 @@ public class PlayerHealth : MonoBehaviour
             TakeDamage(60);
         }
     }
-
     public void HealPlayer(int amount)
     {
-        if((currentHealth + amount) > maxHealth)
+        if ((currentHealth + amount) > maxHealth)
         {
             currentHealth = maxHealth;
         }
@@ -52,24 +41,19 @@ public class PlayerHealth : MonoBehaviour
         {
             currentHealth += amount;
         }
-
         healthBar.SetHealth(currentHealth);
     }
-
     public void TakeDamage(int damage)
     {
         if (!isInvincible)
         {
-            
             currentHealth -= damage;
             healthBar.SetHealth(currentHealth);
-
-            if(currentHealth <= 0)
+            if (currentHealth <= 0)
             {
                 Die();
                 return;
             }
-
             isInvincible = true;
             StartCoroutine(InvincibilityFlash());
             StartCoroutine(HandleInvincibilityDelay());
@@ -83,7 +67,7 @@ public class PlayerHealth : MonoBehaviour
         PlayerMovement.instance.rb.bodyType = RigidbodyType2D.Kinematic;
         PlayerMovement.instance.rb.velocity = Vector3.zero;
         PlayerMovement.instance.playerCollider.enabled = false;
-    
+        GameOverManager.instance.OnPlayerDeath();
     }
 
     public void Respawn()
@@ -106,7 +90,6 @@ public class PlayerHealth : MonoBehaviour
             yield return new WaitForSeconds(invincibilityFlashDelay);
         }
     }
-
     public IEnumerator HandleInvincibilityDelay()
     {
         yield return new WaitForSeconds(invincibilityTimeAfterHit);
