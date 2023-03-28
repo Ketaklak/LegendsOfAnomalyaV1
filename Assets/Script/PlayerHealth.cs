@@ -9,7 +9,11 @@ public class PlayerHealth : MonoBehaviour
     public bool isInvincible = false;
     public SpriteRenderer graphics;
     public HealthBar healthBar;
+
+    public AudioClip hitSound;
+
     public static PlayerHealth instance;
+
     private void Awake()
     {
         if (instance != null)
@@ -47,8 +51,10 @@ public class PlayerHealth : MonoBehaviour
     {
         if (!isInvincible)
         {
+            AudioManager.instance.PlayClipAt(hitSound, transform.position);
             currentHealth -= damage;
             healthBar.SetHealth(currentHealth);
+
             if (currentHealth <= 0)
             {
                 Die();
@@ -59,7 +65,6 @@ public class PlayerHealth : MonoBehaviour
             StartCoroutine(HandleInvincibilityDelay());
         }
     }
-
     public void Die()
     {
         PlayerMovement.instance.enabled = false;
@@ -69,7 +74,6 @@ public class PlayerHealth : MonoBehaviour
         PlayerMovement.instance.playerCollider.enabled = false;
         GameOverManager.instance.OnPlayerDeath();
     }
-
     public void Respawn()
     {
         PlayerMovement.instance.enabled = true;
@@ -79,7 +83,6 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = maxHealth;
         healthBar.SetHealth(currentHealth);
     }
-
     public IEnumerator InvincibilityFlash()
     {
         while (isInvincible)

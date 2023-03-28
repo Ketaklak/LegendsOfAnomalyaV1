@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class WeakSpot : MonoBehaviour
 {
     public GameObject objectToDestroy;
@@ -9,7 +8,7 @@ public class WeakSpot : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-           
+            AudioManager.instance.PlayClipAt(killSound, transform.position);
             Destroy(objectToDestroy);
         }
     }
